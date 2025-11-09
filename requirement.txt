@@ -1,9 +1,0 @@
-streamlit
-pandas
-numpy
-scikit-learn
-google-generativeai
-python-dotenv
-folium
-streamlit-folium
-protobuf==3.20.*
