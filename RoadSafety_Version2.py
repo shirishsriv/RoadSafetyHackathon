@@ -24,117 +24,64 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------------------------------------------------------------
-# ✅ SESSION STATE FOR CONSENT
-# ---------------------------------------------------------------------
-if "consent_given" not in st.session_state:
-    st.session_state.consent_given = False
-
 
 # --------------------------------------------------------
-# ✅ CONSENT STATE MANAGEMENT
+# ✅ DPDP Consent Overlay (Works on Streamlit Cloud)
 # --------------------------------------------------------
 if "consent_given" not in st.session_state:
     st.session_state.consent_given = False
 
-# --------------------------------------------------------
-# ✅ CONSENT POPUP (Compatible with all Streamlit versions)
-# --------------------------------------------------------
-# --------------------------------------------------------
-# ✅ CONSENT STATE MANAGEMENT (DO NOT MODIFY)
-# --------------------------------------------------------
-if "consent_given" not in st.session_state:
-    st.session_state.consent_given = False
-
-
-# --------------------------------------------------------
-# ✅ FORMATTED POPUP (Streamlit Cloud Compatible)
-# --------------------------------------------------------
-def consent_popup():
-    st.markdown(
-        """
+if not st.session_state.consent_given:
+    # Overlay styling
+    st.markdown("""
         <style>
-            /* fullscreen blur overlay */
-            .consent-overlay {
+            .overlay {
                 position: fixed;
                 top: 0; left: 0;
                 width: 100%; height: 100%;
-                background-color: rgba(0,0,0,0.65);
-                backdrop-filter: blur(4px);
-                z-index: 9998;
+                background: rgba(0, 0, 0, 0.6);
+                z-index: 9999;
             }
-
-            /* popup card */
-            .consent-modal {
+            .popup {
                 position: fixed;
                 top: 50%; left: 50%;
                 transform: translate(-50%, -50%);
                 background: #ffffff;
                 padding: 30px 35px;
-                width: 460px;
-                border-radius: 18px;
-                box-shadow: 0px 6px 30px rgba(0,0,0,0.35);
+                width: 450px;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                z-index: 10000;
                 text-align: center;
-                z-index: 9999;
-                font-family: 'Segoe UI', sans-serif;
-                animation: fadeIn 0.3s ease-in-out;
-            }
-
-            .modal-title {
-                font-size: 22px;
-                font-weight: 700;
-                color: #ff8f00;
-            }
-
-            .modal-text {
-                font-size: 16px;
-                margin-top: 12px;
-                color: #333;
-            }
-
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translate(-50%, -48%); }
-                to   { opacity: 1; transform: translate(-50%, -50%); }
             }
         </style>
+    """, unsafe_allow_html=True)
 
-        <div class="consent-overlay"></div>
-        <div class="consent-modal">
-            <div class="modal-title">🔒 Data Usage Consent — Required</div>
+    st.markdown('<div class="overlay"></div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="popup">', unsafe_allow_html=True)
 
-            <p class="modal-text">
-                Your inputs will be processed using <b>Google Gemini (third-party AI)</b> 
-                to generate road safety recommendations.<br><br>
+        st.write("### 🔒 Data Usage Consent — Required by DPDP Act (India)")
+        st.write("""
+        This app sends your input to **Google Gemini (3rd-party AI)**  
+        to generate road-safety interventions.
 
-                ✅ Input is NOT stored by this application<br>
-                ✅ You can withdraw consent anytime<br>
-                ⚠ Do NOT enter personal / sensitive data
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+        ✅ No data stored  
+        ⚠️ Do NOT enter personal or sensitive info  
+        """)
 
-    # ✅ Checkbox appears IN the popup (not below)
-    consent = st.checkbox(
-        "I agree to share my input with Google Gemini (third-party AI)",
-        key="consent_checkbox",
-    )
+        consent = st.checkbox("I give consent to share my input with Gemini AI")
 
-    # ✅ Styled button under the popup
-    if st.button("✅ Accept & Continue", type="primary"):
-        if consent:
-            st.session_state.consent_given = True
-            st.rerun()
-        else:
-            st.error("⚠ Please accept consent to continue.")
+        if st.button("Proceed"):
+            if consent:
+                st.session_state.consent_given = True
+                st.rerun()
+            else:
+                st.error("You must provide consent to continue.")
 
-
-
-# 🚫 BLOCK APP UNTIL CONSENT GIVEN
-if not st.session_state.consent_given:
-    consent_popup()
+        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
+
 
 
 # ---------------------------------------------------------------------
