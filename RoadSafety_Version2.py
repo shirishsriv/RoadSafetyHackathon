@@ -40,54 +40,95 @@ if "consent_given" not in st.session_state:
 # --------------------------------------------------------
 # ✅ CONSENT POPUP (Compatible with all Streamlit versions)
 # --------------------------------------------------------
+# --------------------------------------------------------
+# ✅ CONSENT STATE MANAGEMENT (DO NOT MODIFY)
+# --------------------------------------------------------
+if "consent_given" not in st.session_state:
+    st.session_state.consent_given = False
+
+
+# --------------------------------------------------------
+# ✅ FORMATTED POPUP (Streamlit Cloud Compatible)
+# --------------------------------------------------------
 def consent_popup():
-    with st.container():
-        st.markdown(
-            """
-            <div style="
+    st.markdown(
+        """
+        <style>
+            /* fullscreen blur overlay */
+            .consent-overlay {
                 position: fixed;
                 top: 0; left: 0;
                 width: 100%; height: 100%;
-                background-color: rgba(0,0,0,0.55);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                background-color: rgba(0,0,0,0.65);
+                backdrop-filter: blur(4px);
+                z-index: 9998;
+            }
+
+            /* popup card */
+            .consent-modal {
+                position: fixed;
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                background: #ffffff;
+                padding: 30px 35px;
+                width: 460px;
+                border-radius: 18px;
+                box-shadow: 0px 6px 30px rgba(0,0,0,0.35);
+                text-align: center;
                 z-index: 9999;
-            ">
-                <div style="
-                    background: white;
-                    padding: 30px;
-                    width: 450px;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                    text-align: center;
-                    font-family: Arial, sans-serif;
-                ">
-                    <h3>🔒 Data Usage Consent (DPDP Act)</h3>
-                    <p style="font-size: 15px;">
-                        This app sends your typed input to <b>Google Gemini (third-party AI)</b>
-                        to generate road safety recommendations.<br><br>
+                font-family: 'Segoe UI', sans-serif;
+                animation: fadeIn 0.3s ease-in-out;
+            }
 
-                        ✅ Data not stored<br>
-                        ✅ User can withdraw at anytime<br>
-                        ⚠ Do NOT enter personal or confidential data
-                    </p>
-            """,
-            unsafe_allow_html=True,
-        )
+            .modal-title {
+                font-size: 22px;
+                font-weight: 700;
+                color: #ff8f00;
+            }
 
-        consent = st.checkbox(
-            "I agree to share my input with Google Gemini (third-party AI service)."
-        )
+            .modal-text {
+                font-size: 16px;
+                margin-top: 12px;
+                color: #333;
+            }
 
-        if st.button("✅ Accept & Continue"):
-            if consent:
-                st.session_state.consent_given = True
-                st.rerun()
-            else:
-                st.error("⚠ Please accept consent to continue.")
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translate(-50%, -48%); }
+                to   { opacity: 1; transform: translate(-50%, -50%); }
+            }
+        </style>
 
-        st.markdown("</div></div>", unsafe_allow_html=True)
+        <div class="consent-overlay"></div>
+        <div class="consent-modal">
+            <div class="modal-title">🔒 Data Usage Consent — Required</div>
+
+            <p class="modal-text">
+                Your inputs will be processed using <b>Google Gemini (third-party AI)</b> 
+                to generate road safety recommendations.<br><br>
+
+                ✅ Input is NOT stored by this application<br>
+                ✅ You can withdraw consent anytime<br>
+                ⚠ Do NOT enter personal / sensitive data
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # ✅ Checkbox appears IN the popup (not below)
+    consent = st.checkbox(
+        "I agree to share my input with Google Gemini (third-party AI)",
+        key="consent_checkbox",
+    )
+
+    # ✅ Styled button under the popup
+    if st.button("✅ Accept & Continue", type="primary"):
+        if consent:
+            st.session_state.consent_given = True
+            st.rerun()
+        else:
+            st.error("⚠ Please accept consent to continue.")
+
 
 
 # 🚫 BLOCK APP UNTIL CONSENT GIVEN
