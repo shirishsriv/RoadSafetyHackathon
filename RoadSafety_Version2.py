@@ -31,38 +31,70 @@ if "consent_given" not in st.session_state:
     st.session_state.consent_given = False
 
 
-# ---------------------------------------------------------------------
-# ✅ CONSENT POPUP MODULE
-# ---------------------------------------------------------------------
-@st.dialog("🔒 Data Usage Consent — Required")
+# --------------------------------------------------------
+# ✅ CONSENT STATE MANAGEMENT
+# --------------------------------------------------------
+if "consent_given" not in st.session_state:
+    st.session_state.consent_given = False
+
+# --------------------------------------------------------
+# ✅ CONSENT POPUP (Compatible with all Streamlit versions)
+# --------------------------------------------------------
 def consent_popup():
+    with st.container():
+        st.markdown(
+            """
+            <div style="
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background-color: rgba(0,0,0,0.55);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            ">
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    width: 450px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                    text-align: center;
+                    font-family: Arial, sans-serif;
+                ">
+                    <h3>🔒 Data Usage Consent (DPDP Act)</h3>
+                    <p style="font-size: 15px;">
+                        This app sends your typed input to <b>Google Gemini (third-party AI)</b>
+                        to generate road safety recommendations.<br><br>
 
-    st.write("""
-    ### 🛡 Data Protection Consent (India DPDP Act)
+                        ✅ Data not stored<br>
+                        ✅ User can withdraw at anytime<br>
+                        ⚠ Do NOT enter personal or confidential data
+                    </p>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    This app uses **Google Gemini (third-party AI)** to generate road safety recommendations.
+        consent = st.checkbox(
+            "I agree to share my input with Google Gemini (third-party AI service)."
+        )
 
-    ✅ Your input will be processed to generate recommendations  
-    ✅ No data is stored or retained  
-    ❌ Do NOT enter personal or confidential information  
+        if st.button("✅ Accept & Continue"):
+            if consent:
+                st.session_state.consent_given = True
+                st.rerun()
+            else:
+                st.error("⚠ Please accept consent to continue.")
 
-    **By giving consent, you allow your entered text to be processed through Google Gemini AI.**
-    """)
-
-    chk = st.checkbox("I agree and give consent to share my input with Google Gemini (third-party AI service).")
-
-    if st.button("✅ Accept & Continue", use_container_width=True):
-        if chk:
-            st.session_state.consent_given = True
-            st.rerun()
-        else:
-            st.error("⚠ Please accept consent to continue.")
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
 
-# 🚫 STOP EXECUTION UNTIL CONSENT GIVEN
+# 🚫 BLOCK APP UNTIL CONSENT GIVEN
 if not st.session_state.consent_given:
     consent_popup()
     st.stop()
+
 
 # ---------------------------------------------------------------------
 # 🎨 HEADER WITH EMBEDDED CAR BACKGROUND (cars.png must be in same folder)
