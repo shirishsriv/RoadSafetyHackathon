@@ -20,7 +20,7 @@ The app takes road safety problem details (hazards, environment, problem descrip
 
 ## 🚀 Live Demo (Streamlit Cloud)
 
-🔗 **App link:** *(Add once you deploy on Streamlit)*  
+🔗 **App link:** https://roadsafety-testing.streamlit.app
 Example: `https://road-safety-gpt.streamlit.app/`
 
 ---
