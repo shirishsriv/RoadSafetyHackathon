@@ -123,6 +123,7 @@ def load_interventions(file=None):
 
 uploaded = st.sidebar.file_uploader("Upload interventions.csv", type=["csv"])
 df = load_interventions(uploaded) if uploaded else load_interventions()
+st.write("✅ CSV Columns Loaded:", df.columns.tolist())
 
 
 # ---------------------------------------------------------------------
