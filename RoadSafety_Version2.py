@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------
-# 🚦 ROAD SAFETY GPT ADVISOR (v4.9) — DEBUGGED & IMPROVED
+# 🚦 ROAD SAFETY GPT ADVISOR — DPDP Full Page Consent (v5.0)
 # ---------------------------------------------------------------------
 
 import os
@@ -22,60 +22,36 @@ st.set_page_config(
 
 
 # ---------------------------------------------------------------------
-# ✅ DPDP CONSENT OVERLAY (Fixed version)
+# ✅ DPDP CONSENT SCREEN (full standalone page, no popup)
 # ---------------------------------------------------------------------
 if "consent_given" not in st.session_state:
     st.session_state.consent_given = False
 
 if not st.session_state.consent_given:
+    st.title("🔒 Data Consent — Required (DPDP Act - India)")
+
     st.markdown("""
-    <style>
-        .overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-        }
-        .popup {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            width: 420px;
-            padding: 28px;
-            border-radius: 12px;
-            text-align: center;
-            z-index: 10000;
-        }
-    </style>
-
-    <div class="overlay">
-        <div class="popup">
-    """, unsafe_allow_html=True)
-
-    st.write("### 🔒 Data Consent (DPDP Act — India)")
-    st.write("""
     This app sends your input to **Google Gemini (3rd-party AI)**  
     for generating road-safety recommendations.
 
     ✅ No data stored  
-    ⚠ Do NOT enter personal or sensitive information  
+    ⚠ Do **NOT** enter personal/sensitive information  
     """)
 
-    consent = st.checkbox("I give consent to share my input with Gemini")
+    consent = st.checkbox("I give consent to share my input with Gemini and proceed.")
 
-    if st.button("Proceed"):
+    if st.button("Continue"):
         if consent:
             st.session_state.consent_given = True
             st.rerun()
         else:
-            st.error("✅ Please check consent to continue.")
+            st.warning("Please check the consent box to continue.")
 
-    st.markdown("</div></div>", unsafe_allow_html=True)
-    st.stop()
+    st.stop()   # prevents loading rest of app until consent is given
 
 
 # ---------------------------------------------------------------------
-# 🎨 HEADER IMAGE (with fallback)
+# 🎨 HEADER IMAGE (optional fallback if missing)
 # ---------------------------------------------------------------------
 def get_base64_image(path):
     with open(path, "rb") as img:
@@ -95,7 +71,7 @@ try:
         }}
         .header-overlay {{
             position: absolute; inset: 0;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.70);
             border-radius: 12px;
         }}
         .header-text {{
@@ -114,6 +90,7 @@ try:
       <div class="header-text">🚦 Road Safety Advisor</div>
     </div>
     """, unsafe_allow_html=True)
+
 except FileNotFoundError:
     st.title("🚦 Road Safety Advisor")
 
@@ -134,7 +111,7 @@ else:
 
 
 # ---------------------------------------------------------------------
-# 📤 LOAD CSV (with caching)
+# 📤 LOAD CSV WITH CACHE
 # ---------------------------------------------------------------------
 @st.cache_data
 def load_interventions(file=None):
@@ -149,7 +126,7 @@ df = load_interventions(uploaded) if uploaded else load_interventions()
 
 
 # ---------------------------------------------------------------------
-# 🔍 VECTOR SEARCH ENGINE (with caching)
+# 🔍 BUILD VECTOR SEARCH MODEL
 # ---------------------------------------------------------------------
 @st.cache_resource
 def build_tfidf_model(df):
@@ -163,7 +140,7 @@ vectorizer, nbrs, tfidf_matrix = build_tfidf_model(df)
 
 
 # ---------------------------------------------------------------------
-# 🧾 PROBLEM INPUT FORM (Prevents reruns while typing)
+# 🧾 INPUT FORM (prevents reruns on typing)
 # ---------------------------------------------------------------------
 with st.form("query_form"):
     st.header("📝 Input Road Safety Problem Details")
@@ -206,4 +183,4 @@ if submitted:
                 except Exception as e:
                     st.error(f"⚠ AI Error: {e}")
 
-st.caption("🛡 DPDP Consent | AI Reasoning | CSV Data Search | v4.9")
+st.caption("🛡 DPDP Consent | AI Reasoning | CSV Data Search | v5.0")
