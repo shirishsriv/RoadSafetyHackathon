@@ -38,5 +38,5 @@ The app takes road safety problem details (hazards, environment, problem descrip
 Clone the repo:
 
 ```bash
-git clone https://github.com/<your-username>/road-safety-gpt.git
+git clone https://github.com/shirishsriv/road-safety-gpt.git
 cd road-safety-gpt
